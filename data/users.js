@@ -1,6 +1,11 @@
 const { query } = require('../lib/db');
 const SQL = require('@nearform/sql');
 
+function getUsers() {
+  return query(SQL`SELECT * FROM users`);
+}
+exports.getUsers = getUsers;
+
 function addUser(email, passwordHash) {
   return query(
     SQL`INSERT INTO users (email, password_hash) VALUES (${email}, ${passwordHash})`

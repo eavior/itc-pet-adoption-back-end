@@ -3,6 +3,7 @@ const { postgrator, query } = require('./lib/db');
 
 const app = express();
 app.use(express.json());
+app.use(require('cors')());
 
 app.use('/pets', require('./routes/pets'));
 app.use('/users', require('./routes/users'));

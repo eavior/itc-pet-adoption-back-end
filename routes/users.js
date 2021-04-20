@@ -1,8 +1,13 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const { addUser, getUserByEmail } = require('../data/users');
+const { getUsers, addUser, getUserByEmail } = require('../data/users');
 
 const router = express.Router();
+
+router.get('/', async (req, res) => {
+  const results = await getUsers();
+  res.send({ user: results });
+});
 
 router.post('/', async (req, res, next) => {
   const { email, password } = req.body;

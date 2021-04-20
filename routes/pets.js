@@ -9,9 +9,42 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { name, type, status } = req.body;
-  await createPet(name, type, status);
-  res.send({ pet: { name, type, status } });
+  console.log(req.body);
+  const {
+    name,
+    type,
+    breed,
+    color,
+    height,
+    weight,
+    hypoallergenic,
+    diet,
+    bio,
+  } = req.body;
+  await createPet(
+    name,
+    type,
+    breed,
+    color,
+    height,
+    weight,
+    hypoallergenic,
+    diet,
+    bio
+  );
+  res.send({
+    pet: {
+      name,
+      type,
+      breed,
+      color,
+      height,
+      weight,
+      hypoallergenic,
+      diet,
+      bio,
+    },
+  });
 });
 
 module.exports = router;

@@ -6,8 +6,18 @@ function getPets() {
 }
 exports.getPets = getPets;
 
-function createPet(name, type, status) {
-  const sql = SQL`INSERT INTO pets (name, type, status) VALUES (${name}, ${type}, ${status});`;
+function createPet(
+  name,
+  type,
+  breed,
+  color,
+  height,
+  weight,
+  hypoallergenic,
+  diet,
+  bio
+) {
+  const sql = SQL`INSERT INTO pets (name, type, breed, color, height, weight, hypoallergenic, diet, bio) VALUES (${name}, ${type}, ${breed}, ${color}, ${height}, ${weight}, ${hypoallergenic}, ${diet}, ${bio});`;
   return query(sql);
 }
 exports.createPet = createPet;
