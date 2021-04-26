@@ -6,9 +6,28 @@ function getUsers() {
 }
 exports.getUsers = getUsers;
 
-function addUser(email, passwordHash) {
+function getUser(userId) {
+  return query(SQL`SELECT * FROM users WHERE id = 'userId`);
+}
+exports.getUser = getUser;
+
+function updateUser(
+  userId,
+  email,
+  passwordHash,
+  firstName,
+  lastName,
+  phoneNumber
+) {
   return query(
-    SQL`INSERT INTO users (email, password_hash) VALUES (${email}, ${passwordHash})`
+    SQL`INSERT INTO users (email, password_hash, first_name, last_name, phone_number) VALUES (${email}, ${passwordHash}, ${firstName}, ${lastName}, ${phoneNumber}) WHERE id = 'userId`
+  );
+}
+exports.updateUser = updateUser;
+
+function addUser(email, passwordHash, firstName, lastName, phoneNumber) {
+  return query(
+    SQL`INSERT INTO users (email, password_hash, first_name, last_name, phone_number) VALUES (${email}, ${passwordHash}, ${firstName}, ${lastName}, ${phoneNumber})`
   );
 }
 exports.addUser = addUser;
