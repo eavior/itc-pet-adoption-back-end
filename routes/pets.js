@@ -28,10 +28,10 @@ router.get('/saved/', auth, async (req, res) => {
 
 router.get('/', async (req, res) => {
   const results = await getAllPets();
-  res.send({ pet: results });
+  res.send({ pets: results });
 });
 
-router.get('/:petId', auth, async (req, res) => {
+router.get('/:petId', async (req, res) => {
   const { petId } = req.params;
   console.log(petId);
   const result = await getPet(petId);
