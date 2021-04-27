@@ -11,6 +11,16 @@ function getAllPetsForCurrentUser(userId) {
 }
 exports.getAllPetsForCurrentUser = getAllPetsForCurrentUser;
 
+function getOwnedPets(userId) {
+  return query(SQL`SELECT * FROM pets WHERE owner_id = ${userId}`);
+}
+exports.getOwnedPets = getOwnedPets;
+
+function getSavedPets(userId) {
+  return query(SQL`SELECT * FROM saved_pets WHERE user_id = ${userId}`);
+}
+exports.getSavedPets = getSavedPets;
+
 function getPet(petId) {
   return query(SQL`SELECT * FROM pets WHERE id = ${petId}`);
 }

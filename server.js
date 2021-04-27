@@ -5,6 +5,7 @@ const app = express();
 app.use(express.json());
 app.use(require('cors')());
 
+app.use('/home', require('./routes/home'));
 app.use('/pets', require('./routes/pets'));
 app.use('/users', require('./routes/users'));
 

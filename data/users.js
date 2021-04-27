@@ -1,6 +1,11 @@
 const { query } = require('../lib/db');
 const SQL = require('@nearform/sql');
 
+function getCurrentUser(userId) {
+  return query(SQL`SELECT * FROM users WHERE id = ${userId}`);
+}
+exports.getCurrentUser = getCurrentUser;
+
 function getUsers() {
   return query(SQL`SELECT * FROM users`);
 }

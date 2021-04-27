@@ -1,7 +1,8 @@
 const express = require('express');
 const {
   getAllPets,
-  getAllPetsForCurrentUser,
+  getSavedPets,
+  getOwnedPets,
   getPet,
   updatePet,
   createPet,
@@ -13,19 +14,29 @@ const fs = require('fs');
 
 const router = express.Router();
 
+router.get('/owned/', auth, async (req, res) => {
+  const userId = req.user.id;
+  const results = await getOwnedPets(userId);
+  res.send({ owned: results });
+});
+
+router.get('/saved/', auth, async (req, res) => {
+  const userId = req.user.id;
+  const results = await getSavedPets(userId);
+  res.send({ saved: results });
+});
+
 router.get('/', async (req, res) => {
   const results = await getAllPets();
   res.send({ pet: results });
 });
 
-router.get('/:userId', async (req, res) => {
-  const results = await getAllPetsForCurrentUser(req.params.userId);
-  res.send({ pet: results });
-});
-
-router.get('/:petId', async (req, res) => {
-  const result = await getPet(req.params.petId);
+router.get('/:petId', auth, async (req, res) => {
+  const { petId } = req.params;
+  console.log(petId);
+  const result = await getPet(petId);
   res.send({ pet: result });
+  console.log('2');
 });
 
 router.put('/:petId', async (req, res) => {
