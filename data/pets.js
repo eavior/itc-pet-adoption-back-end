@@ -37,15 +37,17 @@ function updatePet(
   hypoallergenic,
   diet,
   bio,
-  pictureUrl
+  picture_url
 ) {
-  const sql = SQL`UPDATE pets (name, type, breed, color, height, weight, hypoallergenic, diet, bio, picture_url) VALUES (${name}, ${type}, ${breed}, ${color}, ${height}, ${weight}, ${hypoallergenic}, ${diet}, ${bio}, ${pictureUrl}) WHERE id = ${petId};`;
+  const hypoallergenicINT = hypoallergenic ? 1 : 0;
+
+  // const sql = SQL`UPDATE pets SET (name, type, breed, color, height, weight, hypoallergenic, diet, bio, picture_url) VALUES (${name}, ${type}, ${breed}, ${color}, ${height}, ${weight}, ${hypoallergenic}, ${diet}, ${bio}, ${pictureUrl}) WHERE id = ${petId};`;
+  const sql = SQL`UPDATE pets SET name = ${name}, type = ${type}, breed = ${breed}, color =${color}, height =${height}, weight =${weight}, hypoallergenic =${hypoallergenicINT}, diet =${diet}, bio =${bio}, picture_url = ${picture_url} WHERE id = ${petId};`;
   return query(sql);
 }
 exports.updatePet = updatePet;
 
 function createPet(
-  petId,
   name,
   type,
   breed,
@@ -54,10 +56,26 @@ function createPet(
   weight,
   hypoallergenic,
   diet,
-  bio
+  bio,
+  picture_url
 ) {
-  const sql = SQL`INSERT INTO pets (name, type, breed, color, height, weight, hypoallergenic, diet, bio) VALUES (${name}, ${type}, ${breed}, ${color}, ${height}, ${weight}, ${hypoallergenic}, ${diet}, ${bio});`;
-  return query(sql);
+  console.log(
+    name,
+    type,
+    breed,
+    color,
+    height,
+    weight,
+    hypoallergenic,
+    diet,
+    bio,
+    picture_url,
+    'Test'
+  );
+
+  const sql = SQL`INSERT INTO pets (name, type, breed, color, height, weight, hypoallergenic, diet, bio, picture_url) VALUES (${name}, ${type}, ${breed}, ${color}, ${height}, ${weight}, ${hypoallergenic}, ${diet}, ${bio}, ${picture_url});`;
+
+  return query(sql2);
 }
 exports.createPet = createPet;
 
@@ -66,8 +84,8 @@ exports.createPet = createPet;
 //   return query(sql);
 // }
 
-function updatePetImage(petId, pictureUrl) {
-  const sql = SQL`UPDATE pets SET picture_url = ${pictureUrl} WHERE id = ${petId}`;
-  return query(sql);
-}
-exports.updatePetImage = updatePetImage;
+// function createPetPictureUrl(petId, pictureUrl) {
+//   const sql = SQL`UPDATE pets SET picture_url = ${pictureUrl} WHERE id = ${petId}`;
+//   return query(sql);
+// }
+// exports.createPetPictureUrl = createPetPictureUrl;

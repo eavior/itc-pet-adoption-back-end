@@ -6,6 +6,7 @@ const {
   getPet,
   updatePet,
   createPet,
+  createPetPictureUrl,
 } = require('../data/pets');
 const { upload } = require('../middlewares/multipart');
 const { auth } = require('../middlewares/auth');
@@ -33,10 +34,8 @@ router.get('/', async (req, res) => {
 
 router.get('/:petId', async (req, res) => {
   const { petId } = req.params;
-  console.log(petId);
   const result = await getPet(petId);
   res.send({ pet: result });
-  console.log('2');
 });
 
 router.put('/:petId', async (req, res) => {
@@ -50,7 +49,7 @@ router.put('/:petId', async (req, res) => {
     hypoallergenic,
     diet,
     bio,
-    pictureUrl,
+    picture_url,
   } = req.body;
   await updatePet(
     req.params.petId,
@@ -63,7 +62,7 @@ router.put('/:petId', async (req, res) => {
     hypoallergenic,
     diet,
     bio,
-    pictureUrl
+    picture_url
   );
   res.send({
     pet: {
@@ -76,7 +75,7 @@ router.put('/:petId', async (req, res) => {
       hypoallergenic,
       diet,
       bio,
-      pictureUrl,
+      picture_url,
     },
   });
 });
@@ -93,7 +92,7 @@ router.post('/', async (req, res) => {
     hypoallergenic,
     diet,
     bio,
-    pictureUrl,
+    picture_url,
   } = req.body;
   await createPet(
     name,
@@ -105,7 +104,7 @@ router.post('/', async (req, res) => {
     hypoallergenic,
     diet,
     bio,
-    pictureUrl
+    picture_url
   );
   res.send({
     pet: {
@@ -118,7 +117,7 @@ router.post('/', async (req, res) => {
       hypoallergenic,
       diet,
       bio,
-      pictureUrl,
+      picture_url,
     },
   });
 });
@@ -131,16 +130,18 @@ router.post('/', async (req, res) => {
 //   next();
 // }
 
-router.put(
-  '/:petId/picture_url',
+router.post(
+  '/picture_url/:petId',
   // auth,
   // isSameUser,
   upload.single('image'),
+
   async (req, res) => {
     const result = await uploadToCloudinary(req.file.path);
-    await updatePetImage(req.params.petId, result.secure_url);
+    // console.log(result.secure_url);
+    // await createPetPictureUrl(req.params.petId, result.secure_url);
     fs.unlinkSync(req.file.path);
-    res.send({ pictureUrl: result.secure_url });
+    res.send({ picture_url: result.secure_url });
   }
 );
 

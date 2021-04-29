@@ -1,15 +1,20 @@
 const express = require('express');
 const { postgrator, query } = require('./lib/db');
+const { uploadedFilesFolderName } = require('./middlewares/multipart');
 
 const app = express();
 app.use(express.json());
 app.use(require('cors')());
+
+// all GET requests to /public/... will be served as files
+app.use('/' + uploadedFilesFolderName, express.static(uploadedFilesFolderName));
 
 app.use('/home', require('./routes/home'));
 app.use('/pets', require('./routes/pets'));
 app.use('/users', require('./routes/users'));
 
 app.get('/', (req, res) => {
+  // console.log(req.query); // everything after ?
   res.send('Hello world');
 });
 
