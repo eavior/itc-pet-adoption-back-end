@@ -131,7 +131,7 @@ router.post('/', async (req, res) => {
 // }
 
 router.post(
-  '/picture_url/:petId',
+  '/picture_url/',
   // auth,
   // isSameUser,
   upload.single('image'),

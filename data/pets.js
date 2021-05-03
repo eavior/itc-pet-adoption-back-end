@@ -75,7 +75,7 @@ function createPet(
 
   const sql = SQL`INSERT INTO pets (name, type, breed, color, height, weight, hypoallergenic, diet, bio, picture_url) VALUES (${name}, ${type}, ${breed}, ${color}, ${height}, ${weight}, ${hypoallergenic}, ${diet}, ${bio}, ${picture_url});`;
 
-  return query(sql2);
+  return query(sql);
 }
 exports.createPet = createPet;
 

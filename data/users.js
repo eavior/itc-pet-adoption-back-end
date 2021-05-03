@@ -16,19 +16,44 @@ function getUser(userId) {
 }
 exports.getUser = getUser;
 
-function updateUser(
+function updateUserData(
   userId,
+  bio,
   email,
-  passwordHash,
-  firstName,
-  lastName,
-  phoneNumber
+  first_name,
+  last_name,
+  phone_number,
+  role,
+  updated
 ) {
-  return query(
-    SQL`INSERT INTO users (email, password_hash, first_name, last_name, phone_number) VALUES (${email}, ${passwordHash}, ${firstName}, ${lastName}, ${phoneNumber}) WHERE id = 'userId`
+  console.log(
+    'Start',
+    userId,
+    bio,
+    email,
+    first_name,
+    last_name,
+    phone_number,
+    role,
+    updated,
+    'End'
   );
+  const sql = SQL`UPDATE users SET bio = ${bio}, first_name = ${first_name}, last_name = ${last_name}, phone_number = ${phone_number}, role =${role}, updated = CURRENT_TIMESTAMP WHERE id = ${userId};`;
+  return query(sql);
 }
-exports.updateUser = updateUser;
+exports.updateUserData = updateUserData;
+
+function updateUserEmail(userId, email, updated) {
+  const sql = SQL`UPDATE users SET email = ${email}, updated = CURRENT_TIMESTAMP WHERE id = ${userId};`;
+  return query(sql);
+}
+exports.updateUserEmail = updateUserEmail;
+
+function updateUserPassword(userId, passwordHash, updated) {
+  const sql = SQL`UPDATE users SET password_hash = ${passwordHash}, updated = CURRENT_TIMESTAMP WHERE id = ${userId};`;
+  return query(sql);
+}
+exports.updateUserPassword = updateUserPassword;
 
 function addUser(email, passwordHash, firstName, lastName, phoneNumber) {
   return query(

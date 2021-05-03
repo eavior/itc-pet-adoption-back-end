@@ -1,6 +1,13 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const { getUsers, addUser, getUserByEmail } = require('../data/users');
+const {
+  getUsers,
+  addUser,
+  getUserByEmail,
+  updateUserData,
+  updateUserEmail,
+  updateUserPassword,
+} = require('../data/users');
 const jwt = require('jsonwebtoken');
 
 const router = express.Router();
@@ -11,13 +18,72 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:userId', async (req, res) => {
+  console.log('hello');
   const result = await getUser(req.params.userId);
   res.send({ user: results });
 });
 
-router.put('/:userId', async (req, res) => {
-  const results = await updateUser(req.params.userId);
-  res.send({ user: results });
+// router.put('/:userId', async (req, res) => {
+//   const results = await updateUser(req.params.userId);
+//   res.send({ user: results });
+// });
+
+router.put('/:userId', async (req, res, next) => {
+  console.log('test');
+  const {
+    bio,
+    email,
+    first_name,
+    last_name,
+    password,
+    phone_number,
+    role,
+    updated,
+  } = req.body;
+
+  await updateUserData(
+    req.params.userId,
+    bio,
+    email,
+    first_name,
+    last_name,
+    phone_number,
+    role,
+    updated
+  );
+
+  if (email !== '') {
+    const user = await getUserByEmail(email);
+    if (user) {
+      res.status(403).send({
+        message: 'There is already a user account with this email address',
+      });
+      return;
+    }
+    await updateUserEmail(req.params.userId, email, updated);
+  }
+
+  if (password !== '') {
+    bcrypt.hash(password, 10, async (err, hash) => {
+      if (err) next(err);
+      else {
+        await updateUserPassword(req.params.userId, hash, updated);
+      }
+    });
+  }
+
+  res.send({
+    user: {
+      bio,
+      email,
+      first_name,
+      last_name,
+      phone_number,
+      role,
+      updated,
+    },
+    result: 'The user details have been updated succesfully',
+  });
 });
 
 router.post('/signup', async (req, res, next) => {
@@ -27,7 +93,9 @@ router.post('/signup', async (req, res, next) => {
     else {
       const user = await getUserByEmail(email);
       if (user) {
-        res.status(403).send('user already exists with this email');
+        res.status(403).send({
+          message: 'There is already a user account with this email address',
+        });
         return;
       }
       await addUser(email, hash, firstName, lastName, phoneNumber);
@@ -54,10 +122,11 @@ router.post('/login', async (req, res, next) => {
             email: user.email,
             created_date: user.created_date,
             id: user.id,
+            role: user.role,
           },
         });
       } else {
-        res.status(401).send('Incorrect password');
+        res.status(401).send({ message: 'Incorrect password' });
       }
     }
   });
