@@ -27,7 +27,7 @@ router.get('/saved/', auth, async (req, res) => {
   res.send({ saved: results });
 });
 
-router.get('/', async (req, res) => {
+router.get('/all/', auth, async (req, res) => {
   const results = await getAllPets();
   res.send({ pets: results });
 });
