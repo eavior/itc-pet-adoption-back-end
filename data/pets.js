@@ -26,6 +26,37 @@ function getPet(petId) {
 }
 exports.getPet = getPet;
 
+function deletePet(petId) {
+  console.log(petId);
+  return query(SQL`DELETE FROM pets WHERE id = ${petId}`);
+}
+exports.deletePet = deletePet;
+
+function adoptPet(petId, userId, status) {
+  const sql = SQL`UPDATE pets SET owner_id = ${userId}, status = ${status} WHERE id = ${petId};`;
+  return query(sql);
+}
+exports.adoptPet = adoptPet;
+
+function savePet(petId, userId) {
+  const sql = SQL`INSERT INTO saved_pets (pet_id, user_id) VALUES (${petId}, ${userId})`;
+  return query(sql);
+}
+exports.savePet = savePet;
+
+function removePet(petId, userId) {
+  console.log('remove');
+  const sql = SQL`DELETE FROM saved_pets WHERE pet_id = ${petId} AND user_id = ${userId}`;
+  return query(sql);
+}
+exports.removePet = removePet;
+
+function saveStatus(petId, userId) {
+  const sql = SQL`SELECT * FROM saved_pets WHERE pet_id = ${petId} AND user_id = ${userId}`;
+  return query(sql);
+}
+exports.saveStatus = saveStatus;
+
 function updatePet(
   petId,
   name,

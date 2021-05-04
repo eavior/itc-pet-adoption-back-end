@@ -6,7 +6,11 @@ const {
   getPet,
   updatePet,
   createPet,
-  createPetPictureUrl,
+  adoptPet,
+  deletePet,
+  savePet,
+  removePet,
+  saveStatus,
 } = require('../data/pets');
 const { upload } = require('../middlewares/multipart');
 const { auth } = require('../middlewares/auth');
@@ -32,13 +36,38 @@ router.get('/all/', auth, async (req, res) => {
   res.send({ pets: results });
 });
 
-router.get('/:petId', async (req, res) => {
+router.get('/:petId', auth, async (req, res) => {
   const { petId } = req.params;
   const result = await getPet(petId);
   res.send({ pet: result });
 });
 
-router.put('/:petId', async (req, res) => {
+router.get('/save/:petId/user/:userId', auth, async (req, res) => {
+  const { petId, userId } = req.params;
+  const result = await saveStatus(petId, userId);
+  res.send({ savedStatus: result });
+});
+
+router.put('/adopt/:petId', auth, async (req, res) => {
+  const { petId } = req.params;
+  const { userId, status } = req.body;
+  const result = await adoptPet(petId, userId, status);
+  res.send({ pet: result });
+});
+
+router.post('/save/:petId/user/:userId', auth, async (req, res) => {
+  const { petId, userId } = req.params;
+  const result = await savePet(petId, userId);
+  res.send({ pet: result });
+});
+
+router.delete('/remove/:petId/user/:userId', auth, async (req, res) => {
+  const { petId, userId } = req.params;
+  const result = await removePet(petId, userId);
+  res.send({ pet: result });
+});
+
+router.put('/:petId', auth, async (req, res) => {
   const {
     name,
     type,
@@ -80,7 +109,7 @@ router.put('/:petId', async (req, res) => {
   });
 });
 
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   console.log(req.body);
   const {
     name,
@@ -122,6 +151,12 @@ router.post('/', async (req, res) => {
   });
 });
 
+router.delete('/:petId', auth, async (req, res) => {
+  const { petId } = req.params;
+  const result = await deletePet(petId);
+  res.send({ message: 'This pet entry has been succesfully deleted' });
+});
+
 // function isSameUser(req, res, next) {
 //   if (req.user.id !== req.params.userId) {
 //     res.status(403).send({ message: 'Only the same user can access' });
@@ -132,12 +167,13 @@ router.post('/', async (req, res) => {
 
 router.post(
   '/picture_url/',
-  // auth,
+  auth,
   // isSameUser,
   upload.single('image'),
 
   async (req, res) => {
     const result = await uploadToCloudinary(req.file.path);
+    console.log(req.file.path);
     // console.log(result.secure_url);
     // await createPetPictureUrl(req.params.petId, result.secure_url);
     fs.unlinkSync(req.file.path);
