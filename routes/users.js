@@ -7,20 +7,30 @@ const {
   updateUserData,
   updateUserEmail,
   updateUserPassword,
+  getPetsForUser,
 } = require('../data/users');
 const jwt = require('jsonwebtoken');
+const { auth } = require('../middlewares/auth');
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
+  // const userId = req.user.id;
   const results = await getUsers();
   res.send({ user: results });
 });
 
-router.get('/:userId', async (req, res) => {
+router.get('/:userId', auth, async (req, res) => {
   console.log('hello');
   const result = await getUser(req.params.userId);
   res.send({ user: results });
+});
+
+router.get('/:userId/full', auth, async (req, res) => {
+  const { userId } = req.params;
+  console.log(userId);
+  const result = await getPetsForUser(userId);
+  res.send({ pets: result });
 });
 
 // router.put('/:userId', async (req, res) => {
@@ -28,7 +38,7 @@ router.get('/:userId', async (req, res) => {
 //   res.send({ user: results });
 // });
 
-router.put('/:userId', async (req, res, next) => {
+router.put('/:userId', auth, async (req, res, next) => {
   console.log('test');
   const {
     bio,

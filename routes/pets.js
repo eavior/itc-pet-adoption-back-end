@@ -42,27 +42,32 @@ router.get('/:petId', auth, async (req, res) => {
   res.send({ pet: result });
 });
 
-router.get('/save/:petId/user/:userId', auth, async (req, res) => {
-  const { petId, userId } = req.params;
+router.get('/save/:petId/current_user', auth, async (req, res) => {
+  const { petId } = req.params;
+  const userId = req.user.id;
   const result = await saveStatus(petId, userId);
   res.send({ savedStatus: result });
 });
 
 router.put('/adopt/:petId', auth, async (req, res) => {
   const { petId } = req.params;
-  const { userId, status } = req.body;
+  const userId = req.user.id;
+  const { status } = req.body;
+  console.log(status);
   const result = await adoptPet(petId, userId, status);
   res.send({ pet: result });
 });
 
-router.post('/save/:petId/user/:userId', auth, async (req, res) => {
-  const { petId, userId } = req.params;
+router.post('/save/:petId/current_user', auth, async (req, res) => {
+  const { petId } = req.params;
+  const userId = req.user.id;
   const result = await savePet(petId, userId);
   res.send({ pet: result });
 });
 
-router.delete('/remove/:petId/user/:userId', auth, async (req, res) => {
-  const { petId, userId } = req.params;
+router.delete('/remove/:petId/current_user', auth, async (req, res) => {
+  const { petId } = req.params;
+  const userId = req.user.id;
   const result = await removePet(petId, userId);
   res.send({ pet: result });
 });

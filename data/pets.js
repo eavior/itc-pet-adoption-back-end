@@ -17,7 +17,10 @@ function getOwnedPets(userId) {
 exports.getOwnedPets = getOwnedPets;
 
 function getSavedPets(userId) {
-  return query(SQL`SELECT * FROM saved_pets WHERE user_id = ${userId}`);
+  // return query(SQL`SELECT * FROM saved_pets WHERE user_id = ${userId}`);
+  return query(
+    SQL`SELECT * FROM pets WHERE id IN (SELECT pet_id FROM saved_pets WHERE user_id = ${userId})`
+  );
 }
 exports.getSavedPets = getSavedPets;
 

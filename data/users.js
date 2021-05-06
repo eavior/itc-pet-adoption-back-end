@@ -16,6 +16,11 @@ function getUser(userId) {
 }
 exports.getUser = getUser;
 
+function getPetsForUser(userId) {
+  return query(SQL`SELECT * FROM pets WHERE owner_id = ${userId}`);
+}
+exports.getPetsForUser = getPetsForUser;
+
 function updateUserData(
   userId,
   bio,
