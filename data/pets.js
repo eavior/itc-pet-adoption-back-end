@@ -2,9 +2,37 @@ const { query } = require('../lib/db');
 const SQL = require('@nearform/sql');
 
 function getAllPets() {
+  console.log('etst');
   return query(SQL`SELECT * FROM pets`);
 }
 exports.getAllPets = getAllPets;
+
+function getSearchResult(name, type) {
+  console.log(type);
+  const wildCard = '%';
+  const nameWildCard = wildCard.concat(name, wildCard);
+  const typeWildCard = wildCard.concat(type, wildCard);
+  const queryText = `SELECT * FROM pets WHERE type LIKE ${type}`;
+  return query(
+    SQL`SELECT * FROM pets WHERE name LIKE ${nameWildCard} AND type LIKE ${typeWildCard}`
+  );
+}
+exports.getSearchResult = getSearchResult;
+
+function getAdvancedSearchResult(name, type, status, height, weight) {
+  console.log(type);
+  const wildCard = '%';
+  const nameWildCard = wildCard.concat(name, wildCard);
+  const typeWildCard = wildCard.concat(type, wildCard);
+  const statusWildCard = wildCard.concat(status, wildCard);
+  const heightWildCard = wildCard.concat(height, wildCard);
+  const weightWildCard = wildCard.concat(weight, wildCard);
+  const queryText = `SELECT * FROM pets WHERE type LIKE ${type}`;
+  return query(
+    SQL`SELECT * FROM pets WHERE name LIKE ${nameWildCard} AND type LIKE ${typeWildCard} AND type LIKE ${statusWildCard} AND type LIKE ${heightWildCard} AND type LIKE ${weightWildCard}`
+  );
+}
+exports.getAdvancedSearchResult = getAdvancedSearchResult;
 
 function getAllPetsForCurrentUser(userId) {
   return query(SQL`SELECT * FROM pets WHERE owner_id = ${userId}`);

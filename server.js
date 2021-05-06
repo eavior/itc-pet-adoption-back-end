@@ -10,6 +10,7 @@ if (result.error) {
 }
 
 const express = require('express');
+const pino = require('pino-http');
 const { postgrator, query } = require('./lib/db');
 const { uploadedFilesFolderName } = require('./middlewares/multipart');
 const { auth } = require('./middlewares/auth');
@@ -18,26 +19,23 @@ const { getCurrentUser } = require('./data/users');
 const app = express();
 app.use(express.json());
 app.use(require('cors')());
+// app.use(pino({ level: process.env.LOG_LEVEL }));
 
 // all GET requests to /public/... will be served as files
 app.use('/' + uploadedFilesFolderName, express.static(uploadedFilesFolderName));
 
-app.use('/pets', require('./routes/pets'));
-app.use('/users', require('./routes/users'));
+app.use('/pet', require('./routes/pets'));
+app.use('/user', require('./routes/users'));
+app.use('/signup', require('./routes/signup'));
+app.use('/login', require('./routes/login'));
 
 // app.get('/', (req, res) => {
 //   // console.log(req.query); // everything after ?
 //   res.send('Hello world');
 // });
 
-app.get('/', auth, async (req, res) => {
-  const userId = req.user.id;
-  const results = await getCurrentUser(userId);
-  res.send({ user: results });
-});
-
 const host = process.env.HOST;
-const port = process.env.PORT;
+const port = +process.env.PORT;
 
 postgrator
   .migrate()
