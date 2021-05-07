@@ -13,6 +13,6 @@ CREATE TABLE IF NOT EXISTS pets (
   hypoallergenic  BOOLEAN,
   diet          VARCHAR(200),
   bio           VARCHAR(200),
-  picture_url   VARCHAR(500);
+  picture_url   VARCHAR(500),
   PRIMARY KEY (id)
 );
