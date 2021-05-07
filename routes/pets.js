@@ -7,6 +7,7 @@ const {
   updatePet,
   createPet,
   adoptPet,
+  returnPet,
   deletePet,
   savePet,
   removePet,
@@ -22,7 +23,6 @@ const router = express.Router();
 
 // 3
 router.post('/', auth, async (req, res) => {
-  console.log(req.body);
   const {
     name,
     type,
@@ -47,7 +47,7 @@ router.post('/', auth, async (req, res) => {
     bio,
     picture_url
   );
-  res.send({
+  res.status(201).send({
     pet: {
       name,
       type,
@@ -64,32 +64,21 @@ router.post('/', auth, async (req, res) => {
 });
 
 // 4
-router.post(
-  '/picture_url',
-  auth,
-  // isSameUser,
-  upload.single('image'),
-
-  async (req, res) => {
-    const result = await uploadToCloudinary(req.file.path);
-    console.log(req.file.path);
-    // console.log(result.secure_url);
-    // await createPetPictureUrl(req.params.petId, result.secure_url);
-    fs.unlinkSync(req.file.path);
-    res.send({ picture_url: result.secure_url });
-  }
-);
+router.post('/picture_url', auth, upload.single('image'), async (req, res) => {
+  const result = await uploadToCloudinary(req.file.path);
+  fs.unlinkSync(req.file.path);
+  res.status(201).send({ picture_url: result.secure_url });
+});
 
 // 5
 router.get('/:petId', auth, async (req, res) => {
   const { petId } = req.params;
-  console.log('test' + petId);
   if (petId === 'all') {
     const results = await getAllPets();
-    res.send({ pets: results });
+    res.status(200).send({ pets: results });
   } else {
     const result = await getPet(petId);
-    res.send({ pet: result });
+    res.status(200).send({ pet: result });
   }
 });
 
@@ -120,7 +109,7 @@ router.put('/:petId', auth, async (req, res) => {
     bio,
     picture_url
   );
-  res.send({
+  res.status(200).send({
     pet: {
       name,
       type,
@@ -147,17 +136,24 @@ router.get('/?', auth, async (req, res) => {
     height,
     weight
   );
-  res.send({ searchResult: results });
+  res.status(200).send({ searchResult: results });
 });
 
-// 8
-router.put('/:petId/status', auth, async (req, res) => {
+// 8 ADOPT & RETURN
+router.put('/:petId/adopt', auth, async (req, res) => {
   const { petId } = req.params;
   const userId = req.user.id;
   const { status } = req.body;
-  console.log(status);
   const result = await adoptPet(petId, userId, status);
-  res.send({ pet: result });
+  res.status(200).send({ pet: result });
+});
+
+router.put('/:petId/return', auth, async (req, res) => {
+  const { petId } = req.params;
+  const userId = req.user.id;
+  const { status } = req.body;
+  const result = await returnPet(petId, status);
+  res.status(200).send({ pet: result });
 });
 
 // 9
@@ -165,29 +161,29 @@ router.post('/:petId/save', auth, async (req, res) => {
   const { petId } = req.params;
   const userId = req.user.id;
   const result = await savePet(petId, userId);
-  res.send({ pet: result });
+  res.status(200).send({ pet: result });
 });
 
 // 10
-router.delete('/:petId/remove', auth, async (req, res) => {
+router.delete('/:petId/save', auth, async (req, res) => {
   const { petId } = req.params;
   const userId = req.user.id;
   const result = await removePet(petId, userId);
-  res.send({ pet: result });
+  res.status(200).send({ pet: result });
 });
 
 // 11
 router.get('/user/:userId/owned', auth, async (req, res) => {
   const { userId } = req.params;
   const results = await getOwnedPets(userId);
-  res.send({ owned: results });
+  res.status(200).send({ owned: results });
 });
 
 // 12
 router.get('/user/:userId/saved', auth, async (req, res) => {
   const { userId } = req.params;
   const results = await getSavedPets(userId);
-  res.send({ saved: results });
+  res.status(200).send({ saved: results });
 });
 
 // 17 => combined with #5
@@ -196,15 +192,17 @@ router.get('/user/:userId/saved', auth, async (req, res) => {
 router.delete('/:petId', auth, async (req, res) => {
   const { petId } = req.params;
   const result = await deletePet(petId);
-  res.send({ message: 'This pet entry has been succesfully deleted' });
+  res
+    .status(204)
+    .send({ message: 'This pet entry has been succesfully deleted' });
 });
 
 // 19
-router.get('/save/:petId/current_user', auth, async (req, res) => {
-  const { petId } = req.params;
-  const userId = req.user.id;
+router.get('/:petId/user/:userId', auth, async (req, res) => {
+  const { petId, userId } = req.params;
+  // const userId = req.user.id;
   const result = await saveStatus(petId, userId);
-  res.send({ savedStatus: result });
+  res.status(200).send({ savedStatus: result });
 });
 
 module.exports = router;

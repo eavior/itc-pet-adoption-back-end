@@ -7,7 +7,6 @@ const router = express.Router();
 
 // 2
 router.post('/', async (req, res, next) => {
-  console.log('login mess');
   const { email, password } = req.body;
   const user = await getUserByEmail(email);
   if (!user) {

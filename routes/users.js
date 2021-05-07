@@ -18,12 +18,11 @@ const router = express.Router();
 router.get('/:userId', auth, async (req, res) => {
   const { userId } = req.params;
   const results = await getUser(userId);
-  res.send({ user: results });
+  res.status(200).send({ user: results });
 });
 
 // 14
 router.put('/:userId', auth, async (req, res, next) => {
-  console.log('test');
   const {
     bio,
     email,
@@ -43,7 +42,7 @@ router.put('/:userId', auth, async (req, res, next) => {
     role,
     updated
   );
-  res.send({
+  res.status(200).send({
     user: {
       bio,
       email,
@@ -61,16 +60,15 @@ router.put('/:userId', auth, async (req, res, next) => {
 router.get('/', auth, async (req, res) => {
   // const userId = req.user.id;
   const results = await getUsers();
-  res.send({ user: results });
+  res.status(200).send({ user: results });
 });
 
 // 16
 router.get('/:userId/full', auth, async (req, res) => {
   const { userId } = req.params;
-  console.log(userId);
   const userData = await getUser(userId);
   const petData = await getPetsForUser(userId);
-  res.send({ user: [userData], pets: [...petData] });
+  res.status(200).send({ user: [userData], pets: [...petData] });
 });
 
 module.exports = router;

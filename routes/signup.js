@@ -19,7 +19,7 @@ router.post('/', async (req, res, next) => {
         return;
       }
       await addUser(email, hash, firstName, lastName, phoneNumber);
-      res.send({ user: { email } });
+      res.status(201).send({ user: { email } });
     }
   });
 });
