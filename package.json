@@ -4,8 +4,7 @@
   "description": "pet-adoption-backend-eavior",
   "main": "index.js",
   "scripts": {
-    "dev2": "NODE_ENV=development nodemon server.js | pino-pretty",
-    "dev": "NODE_ENV=development nodemon server.js",
+    "dev": "NODE_ENV=development nodemon server.js | pino-pretty",
     "start": "NODE_ENV=production node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,11 +20,13 @@
   "homepage": "https://github.com/israeltechchallenge/pet-adoption-backend-eavior#readme",
   "dependencies": {
     "@nearform/sql": "^1.5.1",
+    "ajv": "^8.2.0",
     "bcrypt": "^5.0.1",
     "cloudinary": "^1.25.1",
     "cors": "^2.8.5",
     "dotenv": "^9.0.0",
     "express": "^4.17.1",
+    "fluent-json-schema": "^2.0.4",
     "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.2",
     "mysql": "^2.18.1",

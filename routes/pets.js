@@ -14,41 +14,48 @@ const {
   saveStatus,
   getAdvancedSearchResult,
 } = require('../data/pets');
+const { checkIfAdmin } = require('../data/users');
 const { upload } = require('../middlewares/multipart');
 const { auth } = require('../middlewares/auth');
 const { uploadToCloudinary } = require('../lib/cloudinary');
 const fs = require('fs');
-
+const S = require('fluent-json-schema').default;
+const validateBody = require('../middlewares/validation');
 const router = express.Router();
 
+function isAdmin(req, res, next) {
+  const userId = req.user.id;
+  const admin = checkIfAdmin(userId);
+  if (!admin) {
+    res.status(403).send({
+      message: 'Only administrators can perform this action',
+    });
+    return;
+  }
+  next();
+}
+
 // 3
-router.post('/', auth, async (req, res) => {
-  const {
-    name,
-    type,
-    breed,
-    color,
-    height,
-    weight,
-    hypoallergenic,
-    diet,
-    bio,
-    picture_url,
-  } = req.body;
-  await createPet(
-    name,
-    type,
-    breed,
-    color,
-    height,
-    weight,
-    hypoallergenic,
-    diet,
-    bio,
-    picture_url
-  );
-  res.status(201).send({
-    pet: {
+const NewPetValidationSchema = S.object()
+  .prop('name', S.string().minLength(1).required())
+  .prop('type', S.string().minLength(1).required())
+  .prop('breed', S.string())
+  .prop('height', S.number().minimum(0))
+  .prop('weight', S.number().minimum(0))
+  .prop('image', S.object())
+  .prop('hypoallergenic', S.boolean())
+  .prop('diet', S.string())
+  .prop('bio', S.string())
+  .prop('picture_url', S.string())
+  .valueOf();
+
+router.post(
+  '/',
+  auth,
+  isAdmin,
+  // validateBody(NewPetValidationSchema), // For some reason, this is not working :-(
+  async (req, res, next) => {
+    const {
       name,
       type,
       breed,
@@ -59,16 +66,53 @@ router.post('/', auth, async (req, res) => {
       diet,
       bio,
       picture_url,
-    },
-  });
-});
+    } = req.body;
+    try {
+      await createPet(
+        name,
+        type,
+        breed,
+        color,
+        height,
+        weight,
+        hypoallergenic,
+        diet,
+        bio,
+        picture_url
+      );
+      res.status(201);
+      res.send({
+        pet: {
+          name,
+          type,
+          breed,
+          color,
+          height,
+          weight,
+          hypoallergenic,
+          diet,
+          bio,
+          picture_url,
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 // 4
-router.post('/picture_url', auth, upload.single('image'), async (req, res) => {
-  const result = await uploadToCloudinary(req.file.path);
-  fs.unlinkSync(req.file.path);
-  res.status(201).send({ picture_url: result.secure_url });
-});
+router.post(
+  '/picture_url',
+  auth,
+  isAdmin,
+  upload.single('image'),
+  async (req, res) => {
+    const result = await uploadToCloudinary(req.file.path);
+    fs.unlinkSync(req.file.path);
+    res.status(201).send({ picture_url: result.secure_url });
+  }
+);
 
 // 5
 router.get('/:petId', auth, async (req, res) => {
@@ -83,7 +127,7 @@ router.get('/:petId', auth, async (req, res) => {
 });
 
 // 6
-router.put('/:petId', auth, async (req, res) => {
+router.put('/:petId', auth, isAdmin, async (req, res) => {
   const {
     name,
     type,
@@ -189,7 +233,7 @@ router.get('/user/:userId/saved', auth, async (req, res) => {
 // 17 => combined with #5
 
 // 18
-router.delete('/:petId', auth, async (req, res) => {
+router.delete('/:petId', auth, isAdmin, async (req, res) => {
   const { petId } = req.params;
   const result = await deletePet(petId);
   res

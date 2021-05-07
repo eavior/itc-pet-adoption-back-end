@@ -8,6 +8,9 @@ GET
 /user - admin
 PUT
 /user/:id - same user, admin
+/user/:id/admin - admin
+DELETE
+/user/:id - admin
 
 pets
 POST  

@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const { addUser, getUserByEmail } = require('../data/users');
+const { getUserByEmail } = require('../data/users');
 const jwt = require('jsonwebtoken');
 
 const router = express.Router();
@@ -17,7 +17,7 @@ router.post('/', async (req, res, next) => {
     if (err) next(err);
     else {
       if (result) {
-        const token = jwt.sign({ id: user.id }, 'whatEVER');
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
         res.send({
           token,
           user: {
@@ -25,6 +25,7 @@ router.post('/', async (req, res, next) => {
             created_date: user.created_date,
             id: user.id,
             role: user.role,
+            fullName: `${user.first_name} ${user.last_name}`,
           },
         });
       } else {
