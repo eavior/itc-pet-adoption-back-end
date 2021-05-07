@@ -9,12 +9,13 @@ if (result.error) {
 
 const express = require('express');
 const pino = require('pino-http');
+const cors = require('cors');
 const { postgrator } = require('./lib/db');
 const { uploadedFilesFolderName } = require('./middlewares/multipart');
 
 const app = express();
 app.use(express.json());
-app.use(require('cors')());
+app.use(cors());
 app.use(pino({ level: process.env.LOG_LEVEL }));
 
 app.use('/' + uploadedFilesFolderName, express.static(uploadedFilesFolderName));
