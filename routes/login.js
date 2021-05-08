@@ -10,7 +10,7 @@ router.post('/', async (req, res, next) => {
   const { email, password } = req.body;
   const user = await getUserByEmail(email);
   if (!user) {
-    res.status(404).send('User not found with this email');
+    res.status(404).send({ message: 'User not found with this email' });
     return;
   }
   bcrypt.compare(password, user.password_hash, (err, result) => {
