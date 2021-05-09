@@ -106,12 +106,9 @@ module.exports = router;
 router.put('/:userId/admin', auth, isAdmin, async (req, res, next) => {
   const { role } = req.body;
   await updateUserRole(req.params.userId, role);
-  res.status(200).send({
-    user: {
-      role,
-    },
-    result: 'The user details have been updated succesfully',
-  });
+  res
+    .status(200)
+    .send({ result: 'The user details have been updated succesfully' });
 });
 
 // 21
