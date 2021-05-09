@@ -108,12 +108,7 @@ router.put('/:userId/admin', auth, isAdmin, async (req, res, next) => {
   await updateUserRole(req.params.userId, role);
   res.status(200).send({
     user: {
-      email,
-      first_name,
-      last_name,
-      phone_number,
       role,
-      updated,
     },
     result: 'The user details have been updated succesfully',
   });
@@ -122,7 +117,7 @@ router.put('/:userId/admin', auth, isAdmin, async (req, res, next) => {
 // 21
 router.delete('/:userId', auth, isAdmin, async (req, res) => {
   const { userId } = req.params;
-  const result = await deleteUser(userId);
+  await deleteUser(userId);
   res
     .status(204)
     .send({ message: 'This user entry has been succesfully deleted' });

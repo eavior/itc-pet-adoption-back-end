@@ -41,7 +41,7 @@ exports.updateUserData = updateUserData;
 
 function updateUserRole(userId, role) {
   const sql = SQL`UPDATE users SET role =${role}, updated = CURRENT_TIMESTAMP WHERE id = ${userId};`;
-  return query(sql);
+  return query(role);
 }
 exports.updateUserRole = updateUserRole;
 
