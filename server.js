@@ -33,8 +33,8 @@ app.use('/user', require('./routes/users'));
 app.use('/signup', require('./routes/signup'));
 app.use('/login', require('./routes/login'));
 
-const host = process.env.HOST;
-const port = +process.env.PORT;
+const host = '0.0.0.0';
+const port = 8080;
 
 postgrator
   .migrate()
